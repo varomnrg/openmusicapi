@@ -16,6 +16,7 @@ class SongsService {
         const durationInt = duration ? parseInt(duration, 10) : null;
 
         const query = {
+            // eslint-disable-next-line quotes
             text: 'INSERT INTO songs (id, title, year, performer, genre, duration, "albumId", created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
             values: [id, title, year, performer, genre, durationInt, albumId, createdAt, updatedAt],
         };
@@ -62,6 +63,7 @@ class SongsService {
         const updatedAt = new Date().toISOString();
 
         const query = {
+            // eslint-disable-next-line quotes
             text: 'UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, duration = $5, "albumId" = $6, updated_at = $7 WHERE id = $8 RETURNING id',
             values: [title, year, genre, performer, duration, albumId, updatedAt, id],
         };

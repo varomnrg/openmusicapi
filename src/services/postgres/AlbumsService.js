@@ -42,6 +42,7 @@ class AlbumsService {
         const res = { ...result.rows.map(mapAlbumToModel)[0] };
 
         const querySong = {
+            // eslint-disable-next-line quotes
             text: 'SELECT * FROM songs WHERE "albumId" = $1',
             values: [res.id],
         };

@@ -2,7 +2,6 @@ const { Pool } = require("pg");
 const InvariantError = require("../../exceptions/InvariantError");
 const AuthorizationError = require("../../exceptions/AuthorizationError");
 const NotFoundError = require("../../exceptions/NotFoundError");
-const ClientError = require("../../exceptions/ClientError");
 const { nanoid } = require("nanoid");
 
 class PlaylistsService {

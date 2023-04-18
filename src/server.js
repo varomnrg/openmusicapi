@@ -27,11 +27,27 @@ const AuthenticationsService = require("./services/postgres/AuthenticationsServi
 const TokenManager = require("./tokenize/TokenManager");
 const AuthenticationsValidator = require("./validator/authentications");
 
+//playlists
+const playlists = require("./api/playlists");
+const PlaylistsService = require("./services/postgres/PlaylistsService");
+const PlaylistsValidator = require("./validator/playlists");
+
+//collaborations
+const collaborations = require("./api/collaborations");
+const CollaborationsService = require("./services/postgres/CollaborationsService");
+const CollaborationsValidator = require("./validator/collaborations");
+
+//activities
+const ActivitiesService = require("./services/postgres/ActivitiesService");
+
 const init = async () => {
     const albumsService = new AlbumsService();
     const songsService = new SongsService();
     const usersService = new UsersService();
+    const activitiesService = new ActivitiesService();
     const authenticationsService = new AuthenticationsService();
+    const collaborationsService = new CollaborationsService(usersService);
+    const playlistsService = new PlaylistsService(collaborationsService, songsService);
 
     const server = Hapi.server({
         port: process.env.PORT,
@@ -46,6 +62,7 @@ const init = async () => {
     server.ext("onPreResponse", (request, h) => {
         const { response } = request;
         if (response instanceof Error) {
+            //console.log(response);
             if (response instanceof ClientError) {
                 const newResponse = h.response({
                     status: "fail",
@@ -73,7 +90,7 @@ const init = async () => {
         },
     ]);
 
-    server.auth.strategy("notesapp_jwt", "jwt", {
+    server.auth.strategy("openmusicapi_jwt", "jwt", {
         keys: process.env.ACCESS_TOKEN_KEY,
         verify: {
             aud: false,
@@ -118,6 +135,22 @@ const init = async () => {
                 usersService,
                 tokenManager: TokenManager,
                 validator: AuthenticationsValidator,
+            },
+        },
+        {
+            plugin: playlists,
+            options: {
+                playlistsService,
+                activitiesService,
+                validator: PlaylistsValidator,
+            },
+        },
+        {
+            plugin: collaborations,
+            options: {
+                collaborationsService,
+                playlistsService,
+                validator: CollaborationsValidator,
             },
         },
     ]);

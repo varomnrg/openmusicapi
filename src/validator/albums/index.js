@@ -1,5 +1,5 @@
-const { AlbumPayloadSchema } = require('./schema');
-const InvariantError = require('../../exceptions/InvariantError');
+const { AlbumPayloadSchema } = require("./schema");
+const InvariantError = require("../../exceptions/InvariantError");
 
 const AlbumsValidator = {
     validateAlbumPayload: (payload) => {
@@ -8,6 +8,6 @@ const AlbumsValidator = {
             throw new InvariantError(validationResult.error.message);
         }
     },
-}
+};
 
 module.exports = AlbumsValidator;

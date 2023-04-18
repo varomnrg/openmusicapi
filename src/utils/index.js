@@ -1,10 +1,4 @@
-const mapAlbumToModel = ({
-    id,
-    name,
-    year,
-    created_at,
-    updated_at,
-}) => ({
+const mapAlbumToModel = ({ id, name, year, created_at, updated_at }) => ({
     id,
     name,
     year,
@@ -12,17 +6,7 @@ const mapAlbumToModel = ({
     updatedAt: updated_at,
 });
 
-const mapSongToModel = ({
-    id,
-    title,
-    year,
-    performer,
-    genre,
-    duration,
-    albumId,
-    created_at,
-    updated_at,
-}) => ({
+const mapSongToModel = ({ id, title, year, performer, genre, duration, albumId, created_at, updated_at }) => ({
     id,
     title,
     year,

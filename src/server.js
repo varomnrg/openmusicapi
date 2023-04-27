@@ -3,6 +3,8 @@ require("dotenv").config();
 
 const Hapi = require("@hapi/hapi");
 const Jwt = require("@hapi/jwt");
+const Inert = require("@hapi/inert");
+const path = require("path");
 
 //error handling
 const ClientError = require("./exceptions/ClientError");
@@ -41,8 +43,18 @@ const CollaborationsValidator = require("./validator/collaborations");
 //activities
 const ActivitiesService = require("./services/postgres/ActivitiesService");
 
+//exports
+const _exports = require("./api/exports");
+const ProducerService = require("./services/rabbitmq/ProducerService");
+const ExportsValidator = require("./validator/exports");
+
+//uploads
+const uploads = require("./api/uploads");
+const StorageService = require("./services/storage/StorageService");
+
 const init = async () => {
     const albumsService = new AlbumsService();
+    const storageService = new StorageService(path.resolve(__dirname, "api/albums/file/images"));
     const songsService = new SongsService();
     const usersService = new UsersService();
     const activitiesService = new ActivitiesService();
@@ -88,6 +100,9 @@ const init = async () => {
         {
             plugin: Jwt,
         },
+        {
+            plugin: Inert,
+        },
     ]);
 
     server.auth.strategy("openmusicapi_jwt", "jwt", {
@@ -111,6 +126,7 @@ const init = async () => {
             plugin: albums,
             options: {
                 service: albumsService,
+                storageService,
                 validator: AlbumsValidator,
             },
         },
@@ -152,6 +168,17 @@ const init = async () => {
                 playlistsService,
                 validator: CollaborationsValidator,
             },
+        },
+        {
+            plugin: _exports,
+            options: {
+                exportsService: ProducerService,
+                playlistsService,
+                validator: ExportsValidator,
+            },
+        },
+        {
+            plugin: uploads,
         },
     ]);
 
